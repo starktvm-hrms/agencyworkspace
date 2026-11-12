@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { useStore } from '../store';
 import { fmtMoney } from '../logic';
+import { useRegisterTabs } from './TabSwitcher';
 
 export function Modal({ title, onClose, children, footer, wide }: {
   title: string; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean;
@@ -100,6 +101,8 @@ export function PageHead({ title, sub, actions }: { title: string; sub?: string;
 }
 
 export function Tabs<T extends string>({ value, onChange, tabs }: { value: T; onChange: (v: T) => void; tabs: { id: T; label: string; count?: number }[] }) {
+  // Makes this tab bar reachable from the tab switcher (Ctrl/⌘ K, Alt [ / ]), including in fullscreen.
+  useRegisterTabs(tabs, value, onChange as (id: string) => void);
   return (
     <div className="tabs" role="tablist">
       {tabs.map((t) => (

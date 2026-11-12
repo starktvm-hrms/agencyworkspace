@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { navigate, useRoute } from './router';
 import { useStore } from './store';
 import { invoiceDisplayStatus } from './logic';
 import { Avatar } from './components/ui';
+import { TabSwitcher, useFullscreen } from './components/TabSwitcher';
 import Dashboard from './views/Dashboard';
 import Projects from './views/Projects';
 import ProjectDetail from './views/ProjectDetail';
@@ -12,6 +13,7 @@ import Team from './views/Team';
 import Finance from './views/Finance';
 import TimeTracking from './views/TimeTracking';
 import SettingsView from './views/Settings';
+import Present from './views/Present';
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', ico: '◧' },
@@ -21,6 +23,7 @@ const NAV = [
   { id: 'clients', label: 'Clients', ico: '◎' },
   { id: 'team', label: 'Departments & Team', ico: '☷' },
   { id: 'finance', label: 'Finance', ico: '₹' },
+  { id: 'present', label: 'Present', ico: '▶' },
   { id: 'settings', label: 'Settings', ico: '⚙' },
 ] as const;
 
@@ -28,6 +31,9 @@ export default function App() {
   const route = useRoute();
   const { data } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const fullscreen = useFullscreen(contentRef);
+  const goSection = useCallback((id: string) => navigate(id), []);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
       return (localStorage.getItem('agency-theme') as 'light' | 'dark') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -65,6 +71,7 @@ export default function App() {
     case 'clients': view = <Clients />; break;
     case 'team': view = <Team />; break;
     case 'finance': view = <Finance />; break;
+    case 'present': view = <Present />; break;
     case 'settings': view = <SettingsView />; break;
     default: view = <Dashboard />;
   }
@@ -84,6 +91,11 @@ export default function App() {
           </button>
         ))}
         <div className="sidebar-foot">
+          {fullscreen.supported && (
+            <button className="btn btn-sm" onClick={fullscreen.toggle} title="Fullscreen (Alt Shift F). Switch tabs with Ctrl/⌘ K or Alt [ / ]">
+              ⤢ Fullscreen
+            </button>
+          )}
           <button className="btn btn-sm" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? '☀ Light mode' : '☾ Dark mode'}
           </button>
@@ -99,11 +111,13 @@ export default function App() {
         </div>
       </aside>
       {menuOpen && <div className="modal-backdrop" style={{ zIndex: 35 }} onClick={() => setMenuOpen(false)} />}
-      <div style={{ minWidth: 0 }}>
+      {/* This is the element that goes fullscreen; the switcher lives inside it so it stays visible there. */}
+      <div className="content" ref={contentRef}>
         <div className="topbar">
           <button className="icon-btn" aria-label="Open menu" onClick={() => setMenuOpen(true)}>☰</button>
           <strong>{data.settings.agencyName}</strong>
         </div>
+        <TabSwitcher sections={NAV} current={section} onSection={goSection} fullscreen={fullscreen} />
         <main className="main">{view}</main>
       </div>
     </div>
