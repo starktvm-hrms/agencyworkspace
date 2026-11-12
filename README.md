@@ -17,6 +17,18 @@ An interactive workspace for running a creative/digital agency: projects, the fl
 | **Finance** | Monthly P&L, spend by category, invoices (line items, tax/GST, draft → sent → paid/void, overdue detection, fill from billable time, CSV export), expense submission & approval (role‑gated), project profitability |
 | **Settings** | Agency name, currency, default tax rate, "acting as" user switcher, JSON backup export/import, reset demo / start fresh |
 
+### Tab switcher & fullscreen
+Every section and every in-page tab bar can be switched from the keyboard, and it keeps working when the workspace is fullscreen (sidebar hidden):
+
+| Keys | Action |
+| --- | --- |
+| `Ctrl/⌘ K` or `Alt K` | Open the tab switcher (type to filter, ↑↓ or Tab to move, Enter to open) |
+| `Alt ]` / `Alt [` | Next / previous tab on the current page |
+| `Alt Shift 1…8` | Jump to a section |
+| `Alt Shift F` | Toggle fullscreen (also **⤢ Fullscreen** in the sidebar) |
+
+In fullscreen a slim section bar is shown at the top. The switcher renders inside the fullscreen element so it stays visible, and on Chromium browsers `Esc` is captured (Keyboard Lock API) so it closes the switcher instead of leaving fullscreen — hold `Esc` or click **Exit** to leave. Browser-reserved combos like `Ctrl+Tab` can't be intercepted by a web page, which is why the shortcuts are Alt-based.
+
 ### How the numbers work
 - **Labour cost** = hours logged × member's internal cost rate.
 - **Project cost** = labour + non‑rejected expenses; **budget burn** = cost ÷ budget.
@@ -45,6 +57,8 @@ src/
   seed.ts          demo data
   store.tsx        React context + reducer, localStorage persistence
   router.ts        tiny hash router
+  tabSwitch.ts     shortcut matching, tab cycling, fuzzy filter (pure, tested)
   components/ui.tsx shared UI (modal, badges, charts…)
+  components/TabSwitcher.tsx tab switcher overlay, fullscreen hook, tab registry
   views/           one file per module
 ```
