@@ -62,7 +62,7 @@ const fsElement = () => document.fullscreenElement ?? (document as FsDoc).webkit
  * Keyboard Lock API where supported (Chromium), so Esc closes the switcher
  * instead of kicking you out; hold Esc (or use the Exit button) to leave.
  */
-export function useFullscreen(ref: RefObject<HTMLElement | null>) {
+export function useFullscreen(ref: RefObject<HTMLElement | null>, { lockEscape = true }: { lockEscape?: boolean } = {}) {
   const [active, setActive] = useState(false);
   const supported = typeof document !== 'undefined' && !!(document.fullscreenEnabled || (document as FsDoc).webkitFullscreenEnabled);
 
@@ -71,6 +71,7 @@ export function useFullscreen(ref: RefObject<HTMLElement | null>) {
       const is = !!ref.current && fsElement() === ref.current;
       setActive(is);
       const kb = (navigator as KbNav).keyboard;
+      if (!lockEscape) return;
       if (is) kb?.lock?.(['Escape']).catch(() => { /* not supported / not allowed */ });
       else kb?.unlock?.();
     };
@@ -80,7 +81,7 @@ export function useFullscreen(ref: RefObject<HTMLElement | null>) {
       document.removeEventListener('fullscreenchange', on);
       document.removeEventListener('webkitfullscreenchange', on);
     };
-  }, [ref]);
+  }, [ref, lockEscape]);
 
   const toggle = useCallback(async () => {
     const el = ref.current as FsEl | null;
@@ -123,6 +124,7 @@ export function TabSwitcher({ sections, current, onSection, fullscreen }: {
 }) {
   const page = usePageTabs();
   const toggleFs = fullscreen.toggle;
+  const fullscreenActive = fullscreen.active;
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [sel, setSel] = useState(0);
@@ -183,6 +185,8 @@ export function TabSwitcher({ sections, current, onSection, fullscreen }: {
     const onKey = (e: KeyboardEvent) => {
       const action = matchShortcut(e, isTyping(e.target));
       if (!action) return;
+      // Something else (e.g. the presentation player) is fullscreen: our UI isn't visible there.
+      if (fsElement() && !fullscreenActive) return;
       e.preventDefault();
       e.stopPropagation();
       switch (action.type) {
@@ -207,7 +211,7 @@ export function TabSwitcher({ sections, current, onSection, fullscreen }: {
     };
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
-  }, [open, page, sections, onSection, toggleFs, show, close, announce]);
+  }, [open, page, sections, onSection, toggleFs, fullscreenActive, show, close, announce]);
 
   const pick = (item: Item | undefined) => {
     if (!item) return;

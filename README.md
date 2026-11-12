@@ -15,7 +15,17 @@ An interactive workspace for running a creative/digital agency: projects, the fl
 | **Clients** | Accounts, contacts, linked projects, lifetime billed and outstanding |
 | **Departments & Team** | Departments with heads and colours, members with roles, cost/bill rates, capacity and 7‑day utilisation |
 | **Finance** | Monthly P&L, spend by category, invoices (line items, tax/GST, draft → sent → paid/void, overdue detection, fill from billable time, CSV export), expense submission & approval (role‑gated), project profitability |
+| **Present** | Line up several presentations (Google Slides, Canva, PowerPoint for the web, Pitch, Figma, YouTube/Vimeo links, or uploaded PDFs/images/videos) and present them in one fullscreen window, switching between them from an on-screen bar without leaving fullscreen |
 | **Settings** | Agency name, currency, default tax rate, "acting as" user switcher, JSON backup export/import, reset demo / start fresh |
+
+### Presenting several decks in fullscreen
+Browsers always leave fullscreen when you switch to another browser tab, and a web page can't prevent that. **Present** avoids it by loading every presentation into a single fullscreen stage in one tab:
+
+1. Open **Present**, paste share links and/or upload files. Ordinary share/edit links are converted to embed links automatically. PowerPoint/Keynote files need exporting to PDF first.
+2. Click **▶ Present fullscreen** (or ▶ on a row to start from it).
+3. Move the mouse to the bottom edge, or click the **▦ 2 / 4** pill in the corner, to show the switcher bar. Click a deck, or use ‹ ›. The bar hides itself after a few seconds.
+
+Each deck stays loaded after you first open it, so switching back returns to the same slide. Keyboard and clicker input goes to the deck on screen. Videos pause when you switch away. Press **Esc** or **⤡ Exit** to leave. The list is saved in this browser, and uploaded files are kept in IndexedDB.
 
 ### Tab switcher & fullscreen
 Every section and every in-page tab bar can be switched from the keyboard, and it keeps working when the workspace is fullscreen (sidebar hidden):
@@ -57,6 +67,8 @@ src/
   seed.ts          demo data
   store.tsx        React context + reducer, localStorage persistence
   router.ts        tiny hash router
+  present.ts       share-link → embed-link conversion, file checks (pure, tested)
+  presentStore.ts  presentation list (localStorage) + uploaded files (IndexedDB)
   tabSwitch.ts     shortcut matching, tab cycling, fuzzy filter (pure, tested)
   components/ui.tsx shared UI (modal, badges, charts…)
   components/TabSwitcher.tsx tab switcher overlay, fullscreen hook, tab registry

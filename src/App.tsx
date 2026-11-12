@@ -13,6 +13,7 @@ import Team from './views/Team';
 import Finance from './views/Finance';
 import TimeTracking from './views/TimeTracking';
 import SettingsView from './views/Settings';
+import Present from './views/Present';
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', ico: '◧' },
@@ -22,6 +23,7 @@ const NAV = [
   { id: 'clients', label: 'Clients', ico: '◎' },
   { id: 'team', label: 'Departments & Team', ico: '☷' },
   { id: 'finance', label: 'Finance', ico: '₹' },
+  { id: 'present', label: 'Present', ico: '▶' },
   { id: 'settings', label: 'Settings', ico: '⚙' },
 ] as const;
 
@@ -69,6 +71,7 @@ export default function App() {
     case 'clients': view = <Clients />; break;
     case 'team': view = <Team />; break;
     case 'finance': view = <Finance />; break;
+    case 'present': view = <Present />; break;
     case 'settings': view = <SettingsView />; break;
     default: view = <Dashboard />;
   }
