@@ -55,8 +55,6 @@ npm test           # unit tests for finance + workflow logic
 npm run build      # type-check + production build to dist/
 ```
 
-**Live:** https://seminar.starkpeople.in, deployed from GitHub to the Hostinger VPS on every push to the default branch. Setup and secrets are in [`deploy/README.md`](deploy/README.md).
-
 The app ships with realistic demo data (dates are relative to today). Data is persisted in the browser's `localStorage`; use **Settings → Export backup** to move it between machines.
 
 ## Project structure
